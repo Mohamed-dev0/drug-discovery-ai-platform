@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Optionnel mais propre pour un layout full screen */
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
