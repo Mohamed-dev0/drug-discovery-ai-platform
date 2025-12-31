@@ -69,3 +69,10 @@ pnpm-debug.log*
 .vscode/*
 !.vscode/extensions.json
 .idea/
+
+####################################
+# THIRD-PARTY TOOLS (DO NOT TRACK)
+####################################
+p2rank/
+microservices/p2rank/
+
