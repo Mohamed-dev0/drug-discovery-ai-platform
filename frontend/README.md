@@ -1,73 +1,77 @@
-# React + TypeScript + Vite
+# 🌐 Drug Discovery Platform - Frontend
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is the React-based user interface for the AI-powered drug discovery platform. It provides an interactive 3D environment to visualize protein structures and ligand-binding pockets.
 
-Currently, two official plugins are available:
+## 🚀 Overview
+The frontend is built with **React** and **Vite**, focusing on high-performance 3D rendering and a clean, laboratory-grade user experience.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Key Technologies
+- **React.js & Vite**: For a fast and modern development workflow.
+- **3Dmol.js**: A high-performance JS library for molecular visualization.
+- **Tailwind CSS**: For a responsive and professional scientific UI.
+- **Axios**: To communicate with the FastAPI bioinformatics microservices.
 
-## React Compiler
+## 🛠️ Features
+- **3D Interactive Viewer**: Rotate, zoom, and inspect protein structures in real-time.
+- **Dynamic Overlays**: Display predicted binding pockets as 3D spheres or point clouds.
+- **Visual Controls**: Toggle between different molecular representations (Cartoon, Stick, Sphere).
+- **Target Search**: Direct integration with PDB and AlphaFold database identifiers.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
 
-## Expanding the ESLint configuration
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 💻 Installation & Setup
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### 1. Prerequisites
+- **Node.js** (v16.0.0 or higher)
+- **npm** 
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 2. Install Dependencies
+Navigate to the frontend directory and install the required packages:
+```bash
+cd frontend
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Run the development server
+```bash
+npm run dev
 ```
+The application will be available at:
+```arduino
+http://localhost:5173
+```
+
+### 🔌 Backend Dependency
+This frontend is designed to work with the FastAPI backend located in:
+```bash
+/microservices/p2rank-service
+```
+Make sure the backend is running before using the full functionality of the interface.
+
+The frontend communicates with the backend via HTTP requests (e.g. to trigger pocket detection and retrieve results).
+
+### 🧪 Typical Workflow
+
+1. Start the backend service (FastAPI + P2Rank).
+2. Start the frontend development server.
+3. Enter a protein identifier (PDB ID or UniProt ID).
+4. Load the protein structure.
+5. Run pocket detection.
+6. Inspect predicted binding pockets in the 3D viewer.
+
+### 📁 Project Structure (simplified)
+```text
+frontend/
+├── src/
+│   ├── App.jsx
+│   ├── ProteinPocketPipeline.jsx
+│   └── ...
+├── public/
+├── index.html
+├── package.json
+└── vite.config.ts
+
+```
+
+### 📄 License
+This frontend module is part of the Drug Discovery AI Platform and is licensed under the MIT License.
