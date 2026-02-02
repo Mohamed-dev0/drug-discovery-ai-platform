@@ -1,0 +1,18 @@
+name: drug_discovery
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.10
+  - rdkit=2025.09.4
+  - pdbfixer=1.12
+  - openmm=8.4.0
+  - molscrub=0.2.2
+  - openbabel=3.1.1
+  - pip
+  - pip:
+    - fastapi==0.128.0
+    - uvicorn==0.23.2
+    - python-dotenv==1.2.1
+    - pandas==3.0.0
+    - requests==2.32.5

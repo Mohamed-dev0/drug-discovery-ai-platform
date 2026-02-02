@@ -3,7 +3,8 @@ import logging
 import pandas as pd
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI, HTTPException
-from script_p2Rank import run_p2rank_cli
+from microservices.p2rank_services.script_p2Rank import run_p2rank_cli
+from microservices.gnina_service.script_gnina import (prepare_protein, prepare_ligand, run_gnina)
 from pathlib import Path
 import tempfile
 import shutil
@@ -162,3 +163,22 @@ def download_structure(clean_id: str):
         raise HTTPException(status_code=404, detail="AlphaFold PDB file not available")
 
     return {"pdb": pdb_resp.text, "source": "AlphaFold DB (AI PREDICTION)"}
+
+
+@app.post("/test_run_gnina")
+def test_gnina():
+    # 1) prepare protein
+    protein_filepath = r"C:\Users\PC\OneDrive\Bureau\IA DRUG DISCOVERY\7LME.pdb"
+    ph = 7.0
+    receptor_pdbqt_path = prepare_protein(protein_filepath, ph)  # doit retourner un chemin
+
+    # 2) prepare ligands
+    ligands_input = r"C:\Users\PC\OneDrive\Bureau\IA DRUG DISCOVERY\ligands_examples.csv"
+    ligand_pdbqt_or_sdf_path = prepare_ligand(ligands_input)     # doit retourner un chemin
+
+    # 3) run gnina
+    result = run_gnina(receptor_pdbqt_path, ligand_pdbqt_or_sdf_path)
+    return result
+
+
+
