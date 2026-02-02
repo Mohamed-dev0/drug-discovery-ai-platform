@@ -1,0 +1,6 @@
+SMILES,Name,IC50 (nM),cluster
+Fc1cc(Cl)cc(CN(C(=O)Cc2cncc3ccccc23)c2ccc(cc2)-c2c[nH]cn2)c1,"US20240293380, Compound 12",15.0,0
+Clc1cccc(CN(C(=O)Cc2nnc3ccccn23)c2ccc(cc2)-c2cn[nH]c2)c1,"US20240293380, Compound 1",365.0,1
+CC(C)(C)NC(=O)C(N(C(=O)Cc1cncc2ccccc12)c1ccc(cc1)C1=CCNC1)c1cc(F)cc(F)c1,"US20240293380, Compound 63",1027.0,2
+Fc1cncc(CN(C(=O)Cc2cncc(F)c2)c2ccc(cc2)C2CNC2)c1,"US20240293380, Compound 83",5225.0,3
+Clc1cccc(CN(C(=O)Cc2cnc3ccccn23)c2ccc(cc2)-c2cn[nH]c2)c1,"US20240293380, Compound 4",1146.0,4
