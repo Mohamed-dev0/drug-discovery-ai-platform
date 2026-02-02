@@ -168,12 +168,12 @@ def download_structure(clean_id: str):
 @app.post("/test_run_gnina")
 def test_gnina():
     # 1) prepare protein
-    protein_filepath = r"C:\Users\PC\OneDrive\Bureau\IA DRUG DISCOVERY\7LME.pdb"
+    protein_filepath = "/home/ec2-user/projects/drug-discovery-ai-platform/test_data/7LME.pdb"
     ph = 7.0
     receptor_pdbqt_path = prepare_protein(protein_filepath, ph)  # doit retourner un chemin
 
     # 2) prepare ligands
-    ligands_input = r"C:\Users\PC\OneDrive\Bureau\IA DRUG DISCOVERY\ligands_examples.csv"
+    ligands_input = "/home/ec2-user/projects/drug-discovery-ai-platform/test_data/ligands_examples.csv"
     ligand_pdbqt_or_sdf_path = prepare_ligand(ligands_input)     # doit retourner un chemin
 
     # 3) run gnina
