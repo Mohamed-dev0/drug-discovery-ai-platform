@@ -66,7 +66,7 @@ def prepare_protein(protein_filepath: str, pH: float = 7.0) -> Path:
     # Convert to PDBQT using OpenBabel
     receptor_pdbqt_path = receptor_dir / f"{protein_name}.pdbqt"
     cmd = ["obabel", "-ipdb", clean_path, "-opdbqt", "-O", receptor_pdbqt_path]
-    result = subprocess.run(cmd, capture_output=True, text=True)
+    result = subprocess.run(cmd, text=True)
 
     if result.returncode != 0:
         raise RuntimeError(
@@ -179,9 +179,14 @@ def run_gnina(receptor_pdbqt_path, ligand_pdbqt_path):
                "--seed", "0",
                "--exhaustiveness", "8"]
 
+  out_sdf = Path(abs_path_docking_file) / f"docked_{receptor_filename.split('.')[0]}.sdf"
+
+  if not out_sdf.exists():
+      raise HTTPException(status_code=500, detail="GNINA did not generate output SDF.")
+
   try:
       # Capture output explicitly to print it on error
-      gnina_results = subprocess.run(gnina_cmd, text=True, check=True, capture_output=True)
+      gnina_results = subprocess.run(gnina_cmd, text=True, check=True)
   except subprocess.CalledProcessError as e:
       print("--- GNINA STDOUT ---")
       print(e.stdout)
