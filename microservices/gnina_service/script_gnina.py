@@ -181,8 +181,7 @@ def run_gnina(receptor_pdbqt_path, ligand_pdbqt_path):
 
   out_sdf = Path(abs_path_docking_file) / f"docked_{receptor_filename.split('.')[0]}.sdf"
 
-  if not out_sdf.exists():
-      raise HTTPException(status_code=500, detail="GNINA did not generate output SDF.")
+
 
   try:
       # Capture output explicitly to print it on error
@@ -192,6 +191,9 @@ def run_gnina(receptor_pdbqt_path, ligand_pdbqt_path):
       print(e.stdout)
       print("--- GNINA STDERR ---")
       print(e.stderr)
-      raise 
+      raise
+
+  if not out_sdf.exists():
+      raise HTTPException(status_code=500, detail="GNINA did not generate output SDF.")
 
   return gnina_results.stdout
