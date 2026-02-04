@@ -76,7 +76,7 @@ def prepare_protein(protein_filepath: str, pH: float = 7.0) -> Path:
     if not os.path.exists(receptor_pdbqt_path) or os.path.getsize(receptor_pdbqt_path) == 0:
         raise RuntimeError(f"PDBQT output missing or empty: {receptor_pdbqt_path}")
 
-    return receptor_pdbqt_path
+    return receptor_pdbqt_path, clean_path
 
 
 
@@ -131,7 +131,7 @@ def prepare_ligand(ligands_input):
       return str(ligand_pdbqt)
 
 
-def run_gnina(receptor_pdbqt_path, ligand_pdbqt_path):
+def run_gnina(receptor_pdbqt_path, clean_path, ligand_pdbqt_path):
 
   output_dir = Path("output_dir")
   output_dir.mkdir(parents=True, exist_ok=True)
@@ -140,12 +140,12 @@ def run_gnina(receptor_pdbqt_path, ligand_pdbqt_path):
   ligand_filename = os.path.basename(ligand_pdbqt_path)
 
 
-  run_p2rank_cli(receptor_pdbqt_path, output_dir)
+  run_p2rank_cli(clean_path, output_dir)
 
 
 
   input_name = Path(receptor_pdbqt_path).stem
-  predictions_csv = output_dir / f"{input_name}.pdbqt_predictions.csv"
+  predictions_csv = output_dir / f"{input_name}.pdb_predictions.csv"
   if not predictions_csv.exists():
       raise HTTPException(status_code=500, detail="P2Rank did not generate the _predictions.csv file.")
 
@@ -177,7 +177,7 @@ def run_gnina(receptor_pdbqt_path, ligand_pdbqt_path):
                "--size_z", str(size),
                "-o", f"/data/docked_{receptor_filename.split('.')[0]}.sdf",
                "--seed", "0",
-               "--exhaustiveness", "8"]
+               "--exhaustiveness", "16"]
 
   out_sdf = Path(abs_path_docking_file) / f"docked_{receptor_filename.split('.')[0]}.sdf"
 

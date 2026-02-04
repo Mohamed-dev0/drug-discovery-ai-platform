@@ -170,14 +170,14 @@ def test_gnina():
     # 1) prepare protein
     protein_filepath = "/home/ec2-user/projects/drug-discovery-ai-platform/microservices/test_data/7LME.pdb"
     ph = 7.0
-    receptor_pdbqt_path = prepare_protein(protein_filepath, ph)  # doit retourner un chemin
+    receptor_pdbqt_path, clean_path = prepare_protein(protein_filepath, ph)  # must return two paths
 
     # 2) prepare ligands
     ligands_input = "/home/ec2-user/projects/drug-discovery-ai-platform/microservices/test_data/ligands_examples.csv"
-    ligand_pdbqt_or_sdf_path = prepare_ligand(ligands_input)     # doit retourner un chemin
+    ligand_pdbqt_or_sdf_path = prepare_ligand(ligands_input)     # must return one path
 
     # 3) run gnina
-    result = run_gnina(receptor_pdbqt_path, ligand_pdbqt_or_sdf_path)
+    result = run_gnina(receptor_pdbqt_path,clean_path, ligand_pdbqt_or_sdf_path)
     return result
 
 
