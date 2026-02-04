@@ -158,7 +158,7 @@ def run_gnina(receptor_pdbqt_path, clean_path, ligand_pdbqt_path):
   center_y = df_first_pocket.loc[0,"center_y"].astype(np.float64)
   center_z = df_first_pocket.loc[0,"center_z"].astype(np.float64)
 
-  size = 20
+  size = 40
 
   abs_path_docking_file = os.path.abspath("./docking_file")
 
