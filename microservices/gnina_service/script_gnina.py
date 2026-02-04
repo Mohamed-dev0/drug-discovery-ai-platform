@@ -144,7 +144,7 @@ def run_gnina(receptor_pdbqt_path, clean_path, ligand_pdbqt_path):
 
 
 
-  input_name = Path(receptor_pdbqt_path).stem
+  input_name = Path(clean_path).stem
   predictions_csv = output_dir / f"{input_name}.pdb_predictions.csv"
   if not predictions_csv.exists():
       raise HTTPException(status_code=500, detail="P2Rank did not generate the _predictions.csv file.")
