@@ -44,6 +44,8 @@ data/
 *.pdbqt
 *.sdf
 *.mol2
+!microservices/test_data/ligands_examples.csv
+
 
 ####################################
 # FRONTEND (React / Vite)
@@ -75,4 +77,4 @@ pnpm-debug.log*
 ####################################
 p2rank/
 microservices/p2rank/
-
+serverweb/
