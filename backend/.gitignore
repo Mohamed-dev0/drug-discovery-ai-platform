@@ -1,0 +1,88 @@
+# =========================
+# Python cache
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+
+# =========================
+# Virtual environments
+# =========================
+.venv/
+venv/
+env/
+
+# =========================
+# Pytest / tooling cache
+# =========================
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# =========================
+# Environment secrets
+# =========================
+.env
+.env.local
+.env.*.local
+
+# Keep this file
+!.env.example
+
+# =========================
+# Local IDE files
+# =========================
+.idea/
+.vscode/
+
+# =========================
+# Data files - large or generated
+# =========================
+data/input/
+data/inputs/
+data/output/
+data/outputs/
+data/tmp/
+
+# If you want to keep empty folders
+!data/input/.gitkeep
+!data/inputs/.gitkeep
+!data/output/.gitkeep
+!data/outputs/.gitkeep
+!data/tmp/.gitkeep
+
+# =========================
+# Scientific generated files
+# =========================
+*.sdf
+*.pdb
+*.pdbqt
+*.mol2
+*.csv
+*.log
+
+# But keep small example files if needed
+!data/examples/*.csv
+!data/examples/*.sdf
+!data/examples/*.pdb
+!data/examples/*.pdbqt
+
+# =========================
+# Celery / Redis local files
+# =========================
+celerybeat-schedule
+*.pid
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# useless files
+# =========================
+*.docs
+*.png
