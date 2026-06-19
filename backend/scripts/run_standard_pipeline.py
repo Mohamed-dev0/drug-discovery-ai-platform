@@ -38,7 +38,7 @@ def main():
     ligands_csv = Path("data/inputs/ligands/lipinski_admet_results.csv")
 
 
-    pdb_id = "7LME"  # <-- adapte
+    pdb_id = "7LME"
     batch_size = 10
     smiles_column = "smiles"
     max_ligands_for_test = 30
