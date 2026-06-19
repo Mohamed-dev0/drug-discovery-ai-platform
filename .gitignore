@@ -78,3 +78,10 @@ pnpm-debug.log*
 p2rank/
 microservices/p2rank/
 serverweb/
+
+# =========================
+# useless files
+# =========================
+*.docs
+*.png
+
