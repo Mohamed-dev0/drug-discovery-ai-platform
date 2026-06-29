@@ -34,8 +34,17 @@ def main():
 
     project_dir = Path("/home/ubuntu/drug-discovery").resolve()
 
+    data_dir = project_dir / "data"
+    inputs_dir = data_dir / "inputs"
+    outputs_dir = project_dir / "outputs"
+    tmp_dir = project_dir / "tmp"
+    tools_dir = project_dir / "tools"
 
-    ligands_csv = Path("data/inputs/ligands/lipinski_admet_results.csv")
+    ligands_csv = inputs_dir / "ligands" / "lipinski_admet_results.csv"
+    receptor_work_dir = inputs_dir / "receptor"
+    prepared_ligands_dir = tmp_dir / "ligands_prepared"
+
+    p2rank_executable = tools_dir / "p2rank_2.5.1" / "prank"
 
 
     pdb_id = "7LME"
