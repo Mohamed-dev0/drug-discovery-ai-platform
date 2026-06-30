@@ -7,44 +7,38 @@ from app.pipeline.models import Protein
 
 
 class ProteinDownloader:
-    """Télécharge le fichier PDB d'une protéine depuis la RCSB."""
-    from pathlib import Path
-    import requests
+    """Télécharge un fichier PDB depuis RCSB, sauf s'il existe déjà localement."""
 
-    class ProteinDownloader:
-        """Télécharge un fichier PDB depuis RCSB, sauf s'il existe déjà localement."""
+    def download(self, protein, output_dir: str | Path) -> Path:
+        output_dir = Path(output_dir)
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-        def download(self, protein, output_dir: str | Path) -> Path:
-            output_dir = Path(output_dir)
-            output_dir.mkdir(parents=True, exist_ok=True)
+        pdb_id = protein.pdb_id.upper()
+        output_path = output_dir / f"{pdb_id}.pdb"
 
-            pdb_id = protein.pdb_id.upper()
-            output_path = output_dir / f"{pdb_id}.pdb"
-
-            # Important : ne pas retélécharger si le fichier existe déjà
-            if output_path.exists() and output_path.stat().st_size > 0:
-                print(f"[INFO] PDB already exists locally: {output_path}")
-                return output_path
-
-            url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
-
-            try:
-                response = requests.get(url, timeout=120)
-                response.raise_for_status()
-
-            except requests.RequestException as e:
-                raise RuntimeError(
-                    f"Download request failed for {pdb_id}: {e}\n"
-                    f"You can manually download it from RCSB and place it here: {output_path}"
-                ) from e
-
-            output_path.write_text(response.text)
-
-            if not output_path.exists() or output_path.stat().st_size == 0:
-                raise RuntimeError(f"Downloaded PDB file is missing or empty: {output_path}")
-
+        # Important : ne pas retélécharger si le fichier existe déjà
+        if output_path.exists() and output_path.stat().st_size > 0:
+            print(f"[INFO] PDB already exists locally: {output_path}")
             return output_path
 
+        url = f"https://files.rcsb.org/download/{pdb_id}.pdb"
+
+        try:
+            response = requests.get(url, timeout=120)
+            response.raise_for_status()
+
+        except requests.RequestException as e:
+            raise RuntimeError(
+                f"Download request failed for {pdb_id}: {e}\n"
+                f"You can manually download it from RCSB and place it here: {output_path}"
+            ) from e
+
+        output_path.write_text(response.text)
+
+        if not output_path.exists() or output_path.stat().st_size == 0:
+            raise RuntimeError(f"Downloaded PDB file is missing or empty: {output_path}")
+
+        return output_path
 
 class ProteinCleaner:
     """Nettoie un fichier PDB et produit un clean.pdb."""
