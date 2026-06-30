@@ -41,7 +41,7 @@ def main():
     tools_dir = project_dir / "tools"
 
     ligands_csv = inputs_dir / "ligands" / "lipinski_admet_results.csv"
-    receptor_work_dir = inputs_dir / "receptor"
+    receptor_work_dir = inputs_dir
     prepared_ligands_dir = tmp_dir / "ligands_prepared"
 
     p2rank_executable = tools_dir / "p2rank_2.5.1" / "prank"
