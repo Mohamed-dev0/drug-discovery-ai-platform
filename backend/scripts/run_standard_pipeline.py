@@ -78,7 +78,7 @@ def main():
     ligands_preparator = LigandPreparator(
         converter=converter,
         scrubber=scrubber,
-        work_dir= project_dir / "data/inputs/ligands/ligands_prepared"
+        work_dir= prepared_ligands_dir
     )
 
     ligand_batch_to_sdf = {}
@@ -101,7 +101,7 @@ def main():
         downloader=downloader,
         cleaner=cleaner,
         converter=protein_converter,
-        work_dir = "data/inputs/receptor"
+        work_dir = receptor_work_dir
     )
 
     receptor_pdbqt_path, clean_pdb_path = protein_preparator.prepare(pdb_id, 7.4)
@@ -112,8 +112,7 @@ def main():
     # 5) DETECTER LES POCHES
     # =========================
 
-    p2rank_executable = project_dir / "tools/p2rank_2.5.1/prank"
-    runner = P2RankRunner(p2rank_executable, work_dir=project_dir / f"outputs/p2rank/{pdb_id}")
+    runner = P2RankRunner(p2rank_executable, work_dir=outputs_dir / "p2rank" / pdb_id)
     parser = P2RankResultParser()
     selector = PocketSelector()
 
@@ -146,7 +145,7 @@ def main():
         result_writer=result_writer,
         probe_evaluator=probe_evaluator,
         ligand_preparator=ligands_preparator,
-        work_dir= project_dir / "outputs/gnina/gnina_session",
+        work_dir=outputs_dir / "gnina" / "gnina_session",
         probe_ligand_count=10,
         box_size=20,
         exhaustiveness=4,

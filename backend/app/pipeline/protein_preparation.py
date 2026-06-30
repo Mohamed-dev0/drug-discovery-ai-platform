@@ -116,7 +116,9 @@ class ProteinPreparator:
         self.converter = converter
         self.work_dir = Path(work_dir)
 
-    def prepare(self, protein, pH: float = 7.4):
+    def prepare(self, pdb_id: str, pH: float = 7.4):
+        protein = Protein(pdb_id=pdb_id)
+
         self.work_dir.mkdir(parents=True, exist_ok=True)
 
         raw_dir = self.work_dir / "raw"
