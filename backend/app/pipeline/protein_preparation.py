@@ -7,7 +7,7 @@ from app.pipeline.models import Protein
 
 
 class ProteinDownloader:
-    """Télécharge un fichier PDB depuis RCSB, sauf s'il existe déjà localement."""
+    """Télécharge  fichier PDB depuis RCSB, sauf s'il existe déjà localement."""
 
     def download(self, protein, output_dir: str | Path) -> Path:
         output_dir = Path(output_dir)
