@@ -48,9 +48,9 @@ def main():
 
 
     pdb_id = "7LME"
-    batch_size = 10
+    batch_size = 25
     smiles_column = "smiles"
-    max_ligands_for_test = 100
+    max_ligands_for_test = 500
 
 
     # =========================
@@ -146,7 +146,7 @@ def main():
         probe_evaluator=probe_evaluator,
         ligand_preparator=ligands_preparator,
         work_dir=outputs_dir / "gnina" / "gnina_session",
-        probe_ligand_count=20,
+        probe_ligand_count=50,
         box_size=20,
         exhaustiveness=4,
         seed=0
