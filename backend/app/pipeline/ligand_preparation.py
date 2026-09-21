@@ -28,7 +28,9 @@ class Ligand3DConverter:
 
         # Génération 3D avec ETKDGv3
         params = AllChem.ETKDGv3()
-        result = AllChem.EmbedMolecule(mol_h, params)
+        params.randomSeed = 0
+
+        result = AllChem.EmbedMolecule(mol, params)
 
         if result == -1:
             return None
@@ -139,6 +141,27 @@ class LigandPreparator:
         self.scrubber = scrubber
         self.work_dir = Path(work_dir)
 
+    def _get_ligand_ids_from_sdf(self, sdf_file: Path) -> set[str]:
+        ligand_ids = set()
+
+        supplier = Chem.SDMolSupplier(
+            str(sdf_file),
+            removeHs=False,
+            sanitize=False,
+        )
+
+        for mol in supplier:
+            if mol is None:
+                continue
+
+            if mol.HasProp("_Name"):
+                ligand_id = mol.GetProp("_Name").strip()
+
+                if ligand_id:
+                    ligand_ids.add(ligand_id)
+
+        return ligand_ids
+
     def prepare_batch(self, batch: LigandBatch) -> Path:
         self.work_dir.mkdir(parents=True, exist_ok=True)
 
@@ -146,7 +169,9 @@ class LigandPreparator:
         clean_file = self.work_dir / f"ligands_clean_{batch.batch_id}.sdf"
 
         writer = Chem.SDWriter(str(dirty_file))
-        written_count = 0
+
+        converted_ids: set[str] = set()
+        conversion_failed_ids: set[str] = set()
 
         try:
             for ligand in batch.ligands:
@@ -156,22 +181,80 @@ class LigandPreparator:
                 )
 
                 if ligand_3d is None:
+                    conversion_failed_ids.add(ligand.ligand_id)
                     continue
 
                 writer.write(ligand_3d)
-                written_count += 1
+                converted_ids.add(ligand.ligand_id)
 
         finally:
             writer.close()
 
-        if written_count == 0:
+        if not converted_ids:
             raise ValueError(
                 f"No valid ligands could be prepared for {batch.batch_id}"
             )
 
+        # Nettoyage avec scrub.py
         self.scrubber.scrub(dirty_file, clean_file)
 
+        # Vérifier quels ligands existent réellement après scrubbing
+        clean_ids = self._get_ligand_ids_from_sdf(clean_file)
+
+        missing_after_scrub = converted_ids - clean_ids
+
+        # Rapport des échecs
+        failures = []
+
+        for ligand_id in sorted(conversion_failed_ids):
+            failures.append(
+                {
+                    "ligand_id": ligand_id,
+                    "batch_id": batch.batch_id,
+                    "stage": "3d_conversion",
+                    "reason": "converter_returned_none",
+                }
+            )
+
+        for ligand_id in sorted(missing_after_scrub):
+            failures.append(
+                {
+                    "ligand_id": ligand_id,
+                    "batch_id": batch.batch_id,
+                    "stage": "scrubbing",
+                    "reason": "missing_after_scrub",
+                }
+            )
+
+        failure_report = (
+                self.work_dir
+                / f"ligand_preparation_failures_{batch.batch_id}.csv"
+        )
+
+        pd.DataFrame(
+            failures,
+            columns=[
+                "ligand_id",
+                "batch_id",
+                "stage",
+                "reason",
+            ],
+        ).to_csv(
+            failure_report,
+            index=False,
+        )
+
+        print(
+            f"[PREP][{batch.batch_id}] "
+            f"input={len(batch.ligands)} | "
+            f"converted={len(converted_ids)} | "
+            f"clean={len(clean_ids)} | "
+            f"conversion_failed={len(conversion_failed_ids)} | "
+            f"missing_after_scrub={len(missing_after_scrub)}"
+        )
+
         return clean_file
+
 
 
 class CSVLigandReader:
