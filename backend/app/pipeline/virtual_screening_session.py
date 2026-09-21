@@ -198,6 +198,21 @@ class VirtualScreeningSession:
 
         final_results = list(best_by_ligand.values())
 
+        expected_ligand_ids = {
+            ligand.ligand_id
+            for batch in self.ligand_batches
+            for ligand in batch.ligands
+        }
+
+        result_ligand_ids = set(best_by_ligand.keys())
+
+        missing_ligand_ids = expected_ligand_ids - result_ligand_ids
+
+        print(f"[CHECK] Ligands attendus: {len(expected_ligand_ids)}")
+        print(f"[CHECK] Ligands avec résultat: {len(result_ligand_ids)}")
+        print(f"[CHECK] Ligands manquants: {len(missing_ligand_ids)}")
+        print(f"[CHECK] IDs manquants: {sorted(missing_ligand_ids)}")
+
         # 4. Écrire les résultats
         self.result_writer.write_csv(
             final_results,
