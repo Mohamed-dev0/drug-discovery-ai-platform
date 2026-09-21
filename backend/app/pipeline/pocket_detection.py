@@ -73,7 +73,7 @@ class P2RankResultParser:
         return pockets
 
 class PocketSelector:
-    """Sélectionne les top poches."""
+    """Sélectionne des poches parmi les prédictions."""
 
     def select_top_5(self, pockets):
         if not pockets:
@@ -81,6 +81,22 @@ class PocketSelector:
 
         pockets_sorted = sorted(pockets, key=lambda p: p.rank)
         return pockets_sorted[:5]
+
+    def select_by_id(self, pockets: list[Pocket], selected_pocket_id: str) -> Pocket:
+        """
+        Retourne la poche correspondant à l'identifiant choisi par l'utilisateur.
+        """
+
+        for pocket in pockets:
+            if pocket.pocket_id.strip() == selected_pocket_id.strip():
+                return pocket
+
+        available_ids = [pocket.pocket_id.strip() for pocket in pockets]
+
+        raise ValueError(
+            f"Pocket '{selected_pocket_id}' not found. "
+            f"Available pockets: {available_ids}"
+        )
 
 
 class PocketDetector:

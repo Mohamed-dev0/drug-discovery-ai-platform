@@ -126,14 +126,42 @@ def main():
     print(f"[5] Nombre de poches sélectionnées: {len(top_5_pockets)}")
 
     # =========================
-    # 6) LANCER LA SESSION
+    # 6) SELECTIONNER UNE POCHE
     # =========================
+
+    for pocket in top_5_pockets:
+        print(
+            f"[POCKET] id={pocket.pocket_id.strip()} | "
+            f"rank={pocket.rank} | "
+            f"score={pocket.score} | "
+            f"center=({pocket.center_x}, {pocket.center_y}, {pocket.center_z})"
+        )
+
+    # Temporaire :
+    # simule le choix effectué plus tard par l'utilisateur dans le frontend
+    selected_pocket_id = "pocket1"
+
+    selected_pocket = selector.select_by_id(
+        top_5_pockets,
+        selected_pocket_id,
+    )
+
+    print(
+        f"[6] Poche sélectionnée: {selected_pocket.pocket_id} | "
+        f"center=({selected_pocket.center_x}, "
+        f"{selected_pocket.center_y}, "
+        f"{selected_pocket.center_z})"
+    )
+
+    # =========================
+    # 7) LANCER LA SESSION
+    # =========================
+
     cmd_builder = GninaCommandBuilder()
     gnina_runner = GninaRunner(command_builder=cmd_builder)
     result_parser = GninaResultParser()
     result_writer = DockingResultWriter()
     probe_evaluator = ProbePocketEvaluator()
-
 
     session = VirtualScreeningSession(
         receptor_pdbqt_path=receptor_pdbqt_path,
@@ -152,7 +180,8 @@ def main():
         seed=0
     )
 
-    results = session.run_standard()
+    results = session.run_standard(selected_pocket)
+
     print(f"[DONE] Nombre de résultats finaux: {len(results)}")
 
 

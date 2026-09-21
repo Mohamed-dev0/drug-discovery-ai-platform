@@ -156,62 +156,22 @@ class VirtualScreeningSession:
 
         return all_results
 
-    def run_standard(self) -> list[DockingResult]:
-        # 1. Sélection aléatoire des ligands probe
-        probe_batch = self._select_probe_batch()
+    def run_standard(self, selected_pocket: Pocket) -> list[DockingResult]:
+        """
+        Lance le docking de toute la librairie sur une poche
+        explicitement sélectionnée.
+        """
 
-        # 2. Préparation du SDF probe
-        probe_sdf_path = self.ligand_preparator.prepare_batch(probe_batch)
-
-        # 3. Construire les probe jobs : même batch aléatoire sur chaque poche
-        probe_jobs: list[DockingJob] = []
-
-        for pocket in self.pockets:
-            probe_job = DockingJob(
-                job_id=f"{probe_batch.batch_id}__{pocket.pocket_id}",
-                receptor_pdbqt_path=self.receptor_pdbqt_path,
-                ligand_sdf_path=probe_sdf_path,
-                batch=probe_batch,
-                pocket=pocket,
-                docking_box=self._make_box(pocket),
-                output_sdf_path=(
-                        self.work_dir
-                        / "probe_outputs"
-                        / pocket.pocket_id.strip()
-                        / f"docked_{probe_batch.batch_id}_{pocket.pocket_id.strip()}.sdf"
-                ),
-                exhaustiveness=self.exhaustiveness,
-                seed=self.seed,
-            )
-
-            probe_jobs.append(probe_job)
-
-        # 4. Lancer les probe jobs avec Celery
-        probe_results = self._run_jobs_celery(probe_jobs)
-
-        if not probe_results:
-            raise ValueError("No probe results returned. Cannot select best pocket.")
-
-        # 5. Sélectionner la meilleure poche
-        best_pocket_id = self.probe_evaluator.select_best_pocket(probe_results)
-
-        best_pocket = next(
-            pocket for pocket in self.pockets
-            if pocket.pocket_id.strip() == best_pocket_id.strip()
-        )
-
-        print(f"[INFO] Best pocket selected for full docking: {best_pocket.pocket_id}")
-
-        # 6. Construire les jobs finaux sur la meilleure poche
+        # 1. Un DockingJob par batch, tous sur la même poche
         final_jobs = [
-            self._make_job(batch, best_pocket)
+            self._make_job(batch, selected_pocket)
             for batch in self.ligand_batches
         ]
 
-        # 7. Lancer les jobs finaux avec Celery
+        # 2. Exécuter les jobs avec Celery
         all_results = self._run_jobs_celery(final_jobs)
 
-        # 8. Garder le meilleur résultat par ligand
+        # 3. Garder le meilleur résultat par ligand
         best_by_ligand: dict[str, DockingResult] = {}
 
         for result in all_results:
@@ -223,15 +183,22 @@ class VirtualScreeningSession:
 
             current = best_by_ligand[ligand_id]
 
-            if result.cnn_pose_score is not None and current.cnn_pose_score is not None:
-                if result.cnn_pose_score > current.cnn_pose_score:
-                    best_by_ligand[ligand_id] = result
+            if (
+                    result.cnn_pose_score is not None
+                    and current.cnn_pose_score is not None
+                    and result.cnn_pose_score > current.cnn_pose_score
+            ):
+                best_by_ligand[ligand_id] = result
 
-            elif result.cnn_pose_score is not None and current.cnn_pose_score is None:
+            elif (
+                    result.cnn_pose_score is not None
+                    and current.cnn_pose_score is None
+            ):
                 best_by_ligand[ligand_id] = result
 
         final_results = list(best_by_ligand.values())
 
+        # 4. Écrire les résultats
         self.result_writer.write_csv(
             final_results,
             self.work_dir / "results_standard.csv",
